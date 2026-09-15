@@ -1,0 +1,30 @@
+{
+  "name": "@fish-se7en/show-open-file-picker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/esm/index.js",
+  "module": "dist/cjs/index.js",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "test": "vite"
+  },
+  "keywords": [],
+  "author": "fish-se7en",
+  "license": "ISC",
+  "packageManager": "pnpm@10.20.0",
+  "devDependencies": {
+    "@types/node": "^26.5.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.0"
+  },
+  "files": [
+    "dist"
+  ]
+}
