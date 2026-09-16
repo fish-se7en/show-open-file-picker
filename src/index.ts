@@ -29,41 +29,36 @@ export const showOpenFilePicker = ({
         }
         const accept: string[] = []
         types.forEach((type) => {
-            Object.entries(type.accept).forEach(([mimeType, extensions]) => {
+            Object.entries(type.accept ?? {}).forEach(([mimeType, extensions]) => {
+                if (!/^[a-z]+\/[a-z0-9-.+*]+$/.test(mimeType)) {
+                    throw TypeError("Any key string of the accept options of any item in types options can't parse a valid MIME type.")
+                }
                 extensions.forEach((extension) => {
-                    if (!extension.startsWith(".")) {
-                        throw TypeError("It does not start with .")
-                    }
-                    if (extension.endsWith(".")) {
-                        throw TypeError("It does end with .")
-                    }
-                    if (extension.length > 16) {
-                        throw TypeError("Its length is more than 16.")
+                    if (!extension.startsWith(".") || extension.endsWith(".") || extension.length > 16) {
+                        throw TypeError('Any value string(s) of the accept options of any item in types options is invalid.')
                     }
                 })
                 accept.push(...extensions)
             })
         })
         if (accept.length > 0) {
-            input.setAttribute("accept", accept.join(","))
+            input.setAttribute("accept", Array.from(new Set(accept)).join(","))
         }
         const change = (e: Event) => {
             const files = Array.from(((e.target as HTMLInputElement).files ?? []))
             resolve(files)
         }
-        const error = () => {
-            
-        }
         const focus = () => {
             window.removeEventListener("focus", focus)
             setTimeout(() => {
+                if ((input.files ?? []).length === 0) {
+                    throw new DOMException('The user dismisses the prompt without making a selection.')
+                }
                 input.removeEventListener("change", change)
-                input.removeEventListener("error", error)
                 document.body.removeChild(input)
             }, 750)
         }
         input.addEventListener("change", change)
-        input.addEventListener("error", error)
         window.addEventListener("focus", focus)
         document.body.appendChild(input)
         input.click()
